@@ -2761,8 +2761,10 @@ const wait_1 = __nccwpck_require__(259);
 async function run() {
     try {
         const ms = core.getInput('milliseconds');
+        const test = core.getInput('test');
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
         core.debug(`Waiting ${ms} milliseconds ...`);
+        core.debug(`test: ${JSON.stringify(test)}`);
         // Log the current timestamp, wait, then log the new timestamp
         core.debug(new Date().toTimeString());
         await (0, wait_1.wait)(parseInt(ms, 10));
