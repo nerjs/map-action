@@ -9,12 +9,9 @@ branding:
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
-    required: true
-    default: '1000'
-  test:
-    description: tratata
+  map:
+    description: yaml format
+    requered: true
     
 
 # Define your outputs here.
