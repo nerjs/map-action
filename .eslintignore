@@ -1,4 +1,10 @@
-lib/
-dist/
-node_modules/
-coverage/
+/node_modules
+
+# testing
+/coverage
+
+# production
+/dist
+
+./bin
+bin
