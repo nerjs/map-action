@@ -25,13 +25,13 @@
   },
   "scripts": {
     "ci-test": "jest",
-    "package": "ncc build src/index.ts --license licenses.txt",
     "package:watch": "npm run package -- --watch",
     "test": "jest",
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
     "lint": "eslint .",
+    "package": "ncc build src/index.ts --license licenses.txt",
     "clean": "rimraf dist/",
-    "build": "npm run clean && tsc --build ./tsconfig.build.json"
+    "build": "npm run clean && npm run package"
   },
   "license": "MIT",
   "dependencies": {
@@ -42,6 +42,7 @@
     "@types/node": "20.11.16",
     "@typescript-eslint/eslint-plugin": "6.21.0",
     "@typescript-eslint/parser": "6.21.0",
+    "@vercel/ncc": "0.38.1",
     "eslint": "8.56.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.1.3",
