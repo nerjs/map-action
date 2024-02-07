@@ -2765,7 +2765,7 @@ async function run() {
         core.debug(`test: ${map}`);
         core.debug(`test2: ${map2}`);
         // Set outputs for other workflow steps to use
-        core.setOutput('time', new Date().toTimeString());
+        core.setOutput('time', { a: 1, qwerty: 'Tratata' });
     }
     catch (error) {
         // Fail the workflow run if an error occurs
