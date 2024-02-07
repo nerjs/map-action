@@ -8,12 +8,11 @@ branding:
   color: 'red'
 
 # Define your inputs here.
-inputs:
-  map:
-    description: yaml format
-    requered: true
-  map2:
-    decription: 
+# inputs:
+  # map:
+  #   description: yaml format
+  # map2:
+  #   decription: 
     
 
 # Define your outputs here.
