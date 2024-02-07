@@ -12,6 +12,8 @@ inputs:
   map:
     description: yaml format
     requered: true
+  map2:
+    decription: 
     
 
 # Define your outputs here.

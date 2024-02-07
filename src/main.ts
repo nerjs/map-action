@@ -7,16 +7,12 @@ import { wait } from './wait'
  */
 export async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    const test: any = core.getInput('test')
+    const map: string = core.getInput('map')
+    const map2: string = core.getInput('map2')
 
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-    core.debug(`test: ${JSON.stringify(test)}`)
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    core.debug(`env: ${JSON.stringify(process.env, null, 4)}`)
+    core.debug(`test: ${map}`)
+    core.debug(`test2: ${map2}`)
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())
