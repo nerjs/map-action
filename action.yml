@@ -7,7 +7,7 @@ branding:
   icon: 'heart'
   color: 'red'
 
-Define your inputs here.
+# Define your inputs here.
 inputs:
   map:
     description: yaml format
