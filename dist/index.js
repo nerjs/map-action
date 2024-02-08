@@ -6940,8 +6940,8 @@ const js_yaml_1 = __nccwpck_require__(1917);
 const core = __importStar(__nccwpck_require__(2186));
 const isString = (value) => typeof value === 'string';
 const isNotEmptyString = (value) => isString(value) && !!value;
-const isJSON = (value) => isNotEmptyString(value) && /^{.*}$/.test(value);
-const isYaml = (value) => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_]+(\s+)?:/.test(value);
+const isJSON = (value) => isNotEmptyString(value) && /^\{((.|\n)*)\}$/.test(value);
+const isYaml = (value) => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_\s\(\)]+(\s+)?:/.test(value);
 const parse = (value) => {
     const str = value.trim();
     core.debug(`Input map: ${str}`);

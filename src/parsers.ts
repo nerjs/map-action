@@ -4,8 +4,8 @@ import * as core from '@actions/core'
 const isString = (value: any): value is string => typeof value === 'string'
 const isNotEmptyString = (value: any): value is string => isString(value) && !!value
 
-const isJSON = (value: string): value is string => isNotEmptyString(value) && /^{.*}$/.test(value)
-const isYaml = (value: string): value is string => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_]+(\s+)?:/.test(value)
+const isJSON = (value: string): value is string => isNotEmptyString(value) && /^\{((.|\n)*)\}$/.test(value)
+const isYaml = (value: string): value is string => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_\s\(\)]+(\s+)?:/.test(value)
 
 export const parse = (value: string): Record<string, any> => {
   const str = value.trim()
