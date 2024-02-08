@@ -1,23 +1,23 @@
-import * as core from '@actions/core'
-import { wait } from './wait'
-import yaml from 'js-yaml'
+import { processing } from './processing'
+export interface IControlls {
+  getInput(key: string): string
+  info(message: string): void
+  setFailed(message: string): void
+  setOutput(key: string, value: any): void
+}
 
-/**
- * The main function for the action.
- * @returns {Promise<void>} Resolves when the action is complete.
- */
-export async function run(): Promise<void> {
+export const main = (controls: IControlls) => {
+  const map = controls.getInput('map')
+  const key = controls.getInput('key')
+  const defaultKey = controls.getInput('default_key')
+  const outputName = controls.getInput('output_key_name')
+
   try {
-    const map: string = core.getInput('map')
-    const map2: string = core.getInput('map2')
-    core.debug(`env: ${JSON.stringify(process.env, null, 4)}`)
-    core.debug(`test: ${map}`)
-    core.debug(`test2: ${map2}`)
-
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', { a: 1, qwerty: 'Tratata' })
-  } catch (error) {
-    // Fail the workflow run if an error occurs
-    if (error instanceof Error) core.setFailed(error.message)
+    const result = processing(map, key, defaultKey, outputName)
+    controls.info(`result: ${JSON.stringify(result)}`)
+    Object.entries(result).forEach(([key, value]) => controls.setOutput(key, value))
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Error'
+    controls.setFailed(message)
   }
 }

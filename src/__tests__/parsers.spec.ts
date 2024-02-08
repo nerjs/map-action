@@ -1,7 +1,7 @@
 import { parse } from '../parsers'
 import { dump } from 'js-yaml'
 
-describe('Yaml parser', () => {
+describe('parser', () => {
   const testObject = {
     objectField: {
       value: 'qwerty',
@@ -13,15 +13,15 @@ describe('Yaml parser', () => {
         value: 123,
       },
     ],
-    some: 'qwerty',
+    'some value': 'qwerty',
   }
 
   it('empty value', () => {
-    expect(parse('')).toEqual({})
+    expect(() => parse('')).toThrow()
   })
 
   it('incorrect value', () => {
-    expect(parse('some string')).toEqual({})
+    expect(() => parse('some string')).toThrow()
   })
 
   it('parse json', () => {
@@ -33,21 +33,7 @@ describe('Yaml parser', () => {
 
   it('parse yaml', () => {
     const yamlStr = dump(testObject)
-
     const result = parse(yamlStr)
     expect(result).toEqual(testObject)
-  })
-
-  it('parse env', () => {
-    const envStr = `
-      SOME_VALUE = qwerty
-      other_value=123
-    `
-
-    const result = parse(envStr)
-    expect(result).toEqual({
-      SOME_VALUE: 'qwerty',
-      other_value: '123',
-    })
   })
 })

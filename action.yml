@@ -4,21 +4,19 @@ author: 'nerjs'
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: 'heart'
-  color: 'red'
+  icon: 'terminal'
+  color: 'black'
 
 # Define your inputs here.
 inputs:
+  key: 
+  default_key:
+  output_key_name:
   map:
-    description: yaml format
-  # map2:
-  #   decription: 
+    description: Mapping Description. Acceptable formats - json, yaml, env
+    required: true
     
 
-# Define your outputs here.
-# outputs:
-#   time:
-#     description: 'Your output description here'
 
 runs:
   using: node20
