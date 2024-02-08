@@ -10,8 +10,11 @@ branding:
 # Define your inputs here.
 inputs:
   key: 
+    description: 
   default_key:
+    description: 
   output_key_name:
+    description: 
   map:
     description: Mapping Description. Acceptable formats - json, yaml, env
     required: true
