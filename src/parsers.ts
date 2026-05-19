@@ -1,5 +1,4 @@
 import { load } from 'js-yaml'
-import * as core from '@actions/core'
 
 const MAX_INPUT_LENGTH = 64 * 1024
 
@@ -27,7 +26,6 @@ export const parse = (value: string): Record<string, unknown> => {
   const str = value.trim()
   if (!str) throw new Error(`Empty map value`)
   if (str.length > MAX_INPUT_LENGTH) throw new Error(`Map value exceeds ${MAX_INPUT_LENGTH} bytes`)
-  core.debug(`Input map length: ${str.length}`)
 
   const parsed = tryJSON(str) ?? tryYAML(str)
   if (parsed === undefined) throw new Error(`Incorrect map format. Acceptable formats are json or yaml`)
