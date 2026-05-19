@@ -1,25 +1,21 @@
 name: 'map-action'
-description: 'Mapping variables'
+description: 'Pick a value from a JSON/YAML map by key and expose it as a step output'
 author: 'nerjs'
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
   icon: 'terminal'
   color: 'black'
 
-# Define your inputs here.
 inputs:
-  key: 
-    description: 
-  default_key:
-    description: 
-  output_key_name:
-    description: 
   map:
-    description: Mapping Description. Acceptable formats - json, yaml, env
+    description: 'Mapping as a JSON object or YAML mapping at the top level. Required.'
     required: true
-    
-
+  key:
+    description: 'Primary key to look up in the map. Either key or default_key must be set.'
+  default_key:
+    description: 'Fallback key used when key is empty or not present in the map.'
+  output_key_name:
+    description: 'Name of the output when the looked-up value is a scalar. Defaults to "value". Not allowed when the value is an object.'
 
 runs:
   using: node20

@@ -1,19 +1,36 @@
 import { load } from 'js-yaml'
-import * as core from '@actions/core'
 
-const isString = (value: any): value is string => typeof value === 'string'
-const isNotEmptyString = (value: any): value is string => isString(value) && !!value
+const MAX_INPUT_LENGTH = 64 * 1024
 
-const isJSON = (value: string): value is string => isNotEmptyString(value) && /^\{((.|\n)*)\}$/.test(value)
-const isYaml = (value: string): value is string => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_\s\(\)]+(\s+)?:/.test(value)
+const tryJSON = (str: string): unknown => {
+  try {
+    return JSON.parse(str)
+  } catch {
+    return undefined
+  }
+}
 
-export const parse = (value: string): Record<string, any> => {
+const tryYAML = (str: string): unknown => {
+  try {
+    return load(str)
+  } catch {
+    return undefined
+  }
+}
+
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === 'object' && !Array.isArray(value)
+
+export const parse = (value: string): Record<string, unknown> => {
+  if (typeof value !== 'string') throw new Error(`Empty map value`)
   const str = value.trim()
-  core.debug(`Input map: ${str}`)
-  if (!isNotEmptyString(str)) throw new Error(`Empty map value`)
+  if (!str) throw new Error(`Empty map value`)
+  if (str.length > MAX_INPUT_LENGTH) throw new Error(`Map value exceeds ${MAX_INPUT_LENGTH} bytes`)
 
-  if (isJSON(str)) return JSON.parse(str)
-  if (isYaml(str)) return load(str)
+  const parsed = tryJSON(str) ?? tryYAML(str)
+  if (parsed === undefined) throw new Error(`Incorrect map format. Acceptable formats are json or yaml`)
 
-  throw new Error(`Incorect map format. Acceptable formats are json or yaml`)
+  if (!isPlainObject(parsed)) throw new Error(`Map must be a key-value object`)
+
+  return parsed
 }

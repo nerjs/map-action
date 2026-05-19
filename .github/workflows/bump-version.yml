@@ -1,0 +1,43 @@
+name: Bump version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Semver type of new version (major / minor / patch)'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.PUBLISH_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Git
+        run: |
+          git config user.name 'nerjs'
+          git config user.email 'nerjs.stap@gmail.com'
+
+      - name: Bump version (runs build via npm "version" script)
+        run: npm version ${{ github.event.inputs.version }}
+
+      - name: Push latest version
+        run: git push origin master --follow-tags

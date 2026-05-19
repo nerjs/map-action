@@ -36,4 +36,27 @@ describe('parser', () => {
     const result = parse(yamlStr)
     expect(result).toEqual(testObject)
   })
+
+  it('json top-level array is rejected', () => {
+    expect(() => parse('[1, 2, 3]')).toThrow(/key-value object/)
+  })
+
+  it('json top-level scalar is rejected', () => {
+    expect(() => parse('42')).toThrow(/key-value object/)
+    expect(() => parse('"qwerty"')).toThrow(/key-value object/)
+    expect(() => parse('null')).toThrow(/key-value object/)
+  })
+
+  it('yaml top-level array is rejected', () => {
+    expect(() => parse('- a\n- b\n')).toThrow(/key-value object/)
+  })
+
+  it('flow-style yaml without quoted keys is parsed via yaml fallback', () => {
+    expect(parse('{a: 1, b: 2}')).toEqual({ a: 1, b: 2 })
+  })
+
+  it('input exceeding max length is rejected', () => {
+    const big = '{' + ' '.repeat(64 * 1024) + '}'
+    expect(() => parse(big)).toThrow(/exceeds/)
+  })
 })

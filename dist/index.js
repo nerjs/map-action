@@ -6837,6 +6837,8 @@ exports["default"] = _default;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.DEFAULT_OUTPUT_KEY = void 0;
+// Output name used when the map value is a primitive and no output_key_name is given.
+// Exposed to workflows as ${{ steps.<id>.outputs.value }}.
 exports.DEFAULT_OUTPUT_KEY = 'value';
 
 
@@ -6890,11 +6892,11 @@ const main = (controls) => {
     const map = controls.getInput('map');
     const key = controls.getInput('key');
     const defaultKey = controls.getInput('default_key');
-    const outputName = controls.getInput('output_key_name');
+    const outputKeyName = controls.getInput('output_key_name');
     try {
-        const result = (0, processing_1.processing)(map, key, defaultKey, outputName);
-        controls.info(`result: ${JSON.stringify(result)}`);
-        Object.entries(result).forEach(([key, value]) => controls.setOutput(key, value));
+        const result = (0, processing_1.processing)(map, key, defaultKey, outputKeyName);
+        controls.info(`output keys: ${Object.keys(result).join(', ')}`);
+        Object.entries(result).forEach(([outputKey, value]) => controls.setOutput(outputKey, value));
     }
     catch (err) {
         const message = err instanceof Error ? err.message : 'Error';
@@ -6907,51 +6909,45 @@ exports.main = main;
 /***/ }),
 
 /***/ 1609:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.parse = void 0;
 const js_yaml_1 = __nccwpck_require__(1917);
-const core = __importStar(__nccwpck_require__(2186));
-const isString = (value) => typeof value === 'string';
-const isNotEmptyString = (value) => isString(value) && !!value;
-const isJSON = (value) => isNotEmptyString(value) && /^\{((.|\n)*)\}$/.test(value);
-const isYaml = (value) => isNotEmptyString(value) && !isJSON(value) && /^[a-zA-Z0-9-_\s\(\)]+(\s+)?:/.test(value);
-const parse = (value) => {
-    const str = value.trim();
-    core.debug(`Input map: ${str}`);
-    if (!isNotEmptyString(str))
-        throw new Error(`Empty map value`);
-    if (isJSON(str))
+const MAX_INPUT_LENGTH = 64 * 1024;
+const tryJSON = (str) => {
+    try {
         return JSON.parse(str);
-    if (isYaml(str))
+    }
+    catch {
+        return undefined;
+    }
+};
+const tryYAML = (str) => {
+    try {
         return (0, js_yaml_1.load)(str);
-    throw new Error(`Incorect map format. Acceptable formats are json or yaml`);
+    }
+    catch {
+        return undefined;
+    }
+};
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const parse = (value) => {
+    if (typeof value !== 'string')
+        throw new Error(`Empty map value`);
+    const str = value.trim();
+    if (!str)
+        throw new Error(`Empty map value`);
+    if (str.length > MAX_INPUT_LENGTH)
+        throw new Error(`Map value exceeds ${MAX_INPUT_LENGTH} bytes`);
+    const parsed = tryJSON(str) ?? tryYAML(str);
+    if (parsed === undefined)
+        throw new Error(`Incorrect map format. Acceptable formats are json or yaml`);
+    if (!isPlainObject(parsed))
+        throw new Error(`Map must be a key-value object`);
+    return parsed;
 };
 exports.parse = parse;
 
@@ -6959,61 +6955,43 @@ exports.parse = parse;
 /***/ }),
 
 /***/ 456:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.processing = void 0;
-const core = __importStar(__nccwpck_require__(2186));
 const parsers_1 = __nccwpck_require__(1609);
 const constants_1 = __nccwpck_require__(9042);
-const normalizeOutput = (output, keyName) => {
-    if (output && typeof output === 'object') {
-        if (keyName)
-            throw new Error(`The result is an object "${JSON.stringify(output)}". The default_key (${keyName}) parameter does not apply to objects`);
+const FORBIDDEN_OUTPUT_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const normalizeOutput = (output, outputKeyName) => {
+    if (isPlainObject(output)) {
+        if (outputKeyName)
+            throw new Error(`Map value is an object - output_key_name (${outputKeyName}) is not applicable`);
         if (!Object.keys(output).length)
             throw new Error(`Empty output object`);
         return output;
     }
+    if (Array.isArray(output))
+        throw new Error(`Array result is not supported`);
     if (output == null)
         throw new Error(`Missing output`);
-    return keyName ? { [keyName]: output } : { [constants_1.DEFAULT_OUTPUT_KEY]: output };
+    const target = outputKeyName || constants_1.DEFAULT_OUTPUT_KEY;
+    if (FORBIDDEN_OUTPUT_KEYS.has(target))
+        throw new Error(`output_key_name "${target}" is not allowed`);
+    return { [target]: output };
 };
-const processing = (map, key, defaultKey, keyName) => {
+const processing = (map, key, defaultKey, outputKeyName) => {
     if (!key && !defaultKey)
         throw new Error('One of the key or default_key parameters is mandatory');
     const obj = (0, parsers_1.parse)(map);
-    core.debug(`input: ${JSON.stringify(obj)}`);
-    if (key && key in obj)
-        return normalizeOutput(obj[key], keyName);
+    if (key && Object.hasOwn(obj, key))
+        return normalizeOutput(obj[key], outputKeyName);
     if (!defaultKey)
-        throw new Error(`default_key is required if there is no master key or if the result of a condition is missing`);
-    if (defaultKey in obj)
-        return normalizeOutput(obj[defaultKey], keyName);
+        throw new Error(`default_key is required when key is not found in the map`);
+    if (Object.hasOwn(obj, defaultKey))
+        return normalizeOutput(obj[defaultKey], outputKeyName);
     throw new Error(`default_key (${defaultKey}) must match one of the keys in the map`);
 };
 exports.processing = processing;
