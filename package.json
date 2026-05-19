@@ -31,7 +31,8 @@
     "lint": "eslint .",
     "package": "ncc build src/index.ts --license licenses.txt",
     "clean": "rimraf dist/",
-    "build": "npm run clean && npm run package"
+    "build": "npm run clean && npm run package",
+    "version": "npm run build && git add -A dist"
   },
   "license": "MIT",
   "dependencies": {

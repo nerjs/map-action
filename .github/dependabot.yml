@@ -1,26 +1,64 @@
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: weekly
+      interval: "weekly"
+      time: "17:00"
+    assignees:
+      - "nerjs"
+    labels:
+      - "dependencies"
+      - "bot"
+    target-branch: "dependencies"
+    open-pull-requests-limit: 5
     groups:
-      actions-minor:
-        update-types:
-          - minor
-          - patch
+      actions-toolkit:
+        patterns:
+          - "@actions/*"
 
-  - package-ecosystem: npm
-    directory: /
+      yaml:
+        patterns:
+          - "js-yaml"
+          - "@types/js-yaml"
+
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/node"
+
+      eslint:
+        patterns:
+          - "eslint"
+          - "@typescript-eslint/*"
+          - "eslint-config-prettier"
+          - "eslint-plugin-prettier"
+          - "prettier"
+
+      jest:
+        patterns:
+          - "jest"
+          - "ts-jest"
+          - "@types/jest"
+
+      ncc:
+        patterns:
+          - "@vercel/ncc"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: weekly
+      interval: "weekly"
+      time: "17:00"
+    assignees:
+      - "nerjs"
+    labels:
+      - "dependencies"
+      - "bot"
+      - "github-actions"
+    target-branch: "dependencies"
+    open-pull-requests-limit: 5
     groups:
-      npm-development:
-        dependency-type: development
-        update-types:
-          - minor
-          - patch
-      npm-production:
-        dependency-type: production
-        update-types:
-          - patch
+      actions:
+        patterns:
+          - "*"
