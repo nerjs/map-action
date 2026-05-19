@@ -55,6 +55,31 @@ describe('main', () => {
       expect(() => processing(JSON.stringify({ ...keyValue, dev: null }), 'some', 'dev')).toThrow()
       expect(() => processing(JSON.stringify({ ...keyValue, dev: undefined }), 'some', 'dev')).toThrow()
     })
+
+    it('array value at key is rejected', () => {
+      const map = JSON.stringify({ dev: [1, 2, 3] })
+      expect(() => processing(map, 'dev')).toThrow(/Array/)
+    })
+
+    it('prototype keys are not picked from the map', () => {
+      const map = JSON.stringify(keyValue)
+      expect(() => processing(map, 'toString')).toThrow()
+      expect(() => processing(map, 'constructor')).toThrow()
+      expect(() => processing(map, '__proto__')).toThrow()
+    })
+
+    it('prototype key falls through to default_key', () => {
+      const map = JSON.stringify(keyValue)
+      const out = processing(map, 'toString', 'dev')
+      expect(out).toEqual({ [DEFAULT_OUTPUT_KEY]: keyValue.dev })
+    })
+
+    it('forbidden output_key_name is rejected', () => {
+      const map = JSON.stringify(keyValue)
+      expect(() => processing(map, 'dev', '', '__proto__')).toThrow(/not allowed/)
+      expect(() => processing(map, 'dev', '', 'constructor')).toThrow(/not allowed/)
+      expect(() => processing(map, 'dev', '', 'prototype')).toThrow(/not allowed/)
+    })
   })
 
   describe('successed branch', () => {

@@ -14,8 +14,8 @@ export const main = (controls: IControlls) => {
 
   try {
     const result = processing(map, key, defaultKey, outputName)
-    controls.info(`result: ${JSON.stringify(result)}`)
-    Object.entries(result).forEach(([key, value]) => controls.setOutput(key, value))
+    controls.info(`output keys: ${Object.keys(result).join(', ')}`)
+    Object.entries(result).forEach(([outputKey, value]) => controls.setOutput(outputKey, value))
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Error'
     controls.setFailed(message)
