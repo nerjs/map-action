@@ -38,7 +38,7 @@
   "dependencies": {
     "@actions/core": "3.0.1",
     "@types/js-yaml": "4.0.9",
-    "js-yaml": "5.2.1"
+    "js-yaml": "5.2.3"
   },
   "devDependencies": {
     "@types/jest": "30.0.0",
